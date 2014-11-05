@@ -254,7 +254,7 @@
 }
 
 .upload_form .xblock-reveal.reveal-modal.open{
-  position: fixed;
+  position: absolute;
   top:30%;
   left:50%;
   padding-bottom: 0;
