@@ -172,17 +172,22 @@
   padding: 10px 0;
   font-size: 14px;
 }
+.upload_form .upload_item .upload_input{
+  overflow: hidden;
+  padding-right: 5px;
+}
 .upload_form .upload_item input[type=text]{
-  width: 86%;
+  width: 100%;
   display: inline-block;
   background-color: transparent;
   color: #3384ca;
   margin-bottom: 0;
 }
 .upload_form .upload_item label{
-  width: 13%;
+  width: 75px;
   display: inline-block;
   text-align: right;
+  float: right;
 }
 .upload_form .upload_item label span{
   margin-bottom: 0;
@@ -254,6 +259,7 @@
 }
 
 .upload_form .xblock-reveal.reveal-modal.open{
+  position: fixed;
   max-height: 80%;
   overflow: auto;
   padding-bottom: 0;
