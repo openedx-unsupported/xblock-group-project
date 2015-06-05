@@ -295,7 +295,7 @@ function GroupProjectBlock(runtime, element) {
   $(document).trigger("steps_available", step_map);
   $(document).trigger("select_stage", step_map["default"]);
 
-  var upload_form = $('.upload_form', element).appendTo($(document.body));
+  var upload_form = $('.group-project-upload-form', element).appendTo($(document.body));
   var failed_uploads = [];
 
   var upload_data = {
@@ -407,8 +407,9 @@ function GroupProjectBlock(runtime, element) {
         var field = $(v);
         field.val(field.attr('data-original-value'));
       });
-
-      upload_form.show();
+      // show form and sensibly position the modal box
+      upload_form.show()
+        .find('.reveal-modal').css('top', $(document).scrollTop() + 'px')
     });
 
     // Activate the first peer, or the first group if no peers
