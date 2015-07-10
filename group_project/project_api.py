@@ -397,7 +397,7 @@ class ProjectAPI(object):
             )
         )
 
-        review_assignment_user_urls = ['{}{}users/'.format(self._api_server_address, ra["url"]) for ra in json.loads(response.read())]
+        review_assignment_user_urls = ['{}{}/users/'.format(self._api_server_address, ra["uri"]) for ra in json.loads(response.read())]
         reviewers = []
         for users_url in review_assignment_user_urls:
             reviewers.extend(json.loads(GET(users_url).read())["users"])
