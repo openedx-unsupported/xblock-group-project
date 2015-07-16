@@ -388,7 +388,7 @@ class ProjectAPI(object):
         return workgroup_assignments
 
     @api_error_protect
-    def get_workgroup_reviewers(self, group_id):
+    def get_workgroup_reviewers(self, group_id, content_id):
         response = GET(
             '{}/{}/{}/groups'.format(
                 self._api_server_address,
@@ -397,7 +397,11 @@ class ProjectAPI(object):
             )
         )
 
-        review_assignment_user_urls = ['{}{}users/'.format(self._api_server_address, ra["url"]) for ra in json.loads(response.read())]
+        review_assignment_user_urls = [
+            '{}{}users/'.format(self._api_server_address, ra["url"])
+            for ra in json.loads(response.read())
+            if ra["data"]["xblock_id"] == content_id
+        ]
         reviewers = []
         for users_url in review_assignment_user_urls:
             reviewers.extend(json.loads(GET(users_url).read())["users"])

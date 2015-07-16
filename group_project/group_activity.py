@@ -477,4 +477,3 @@ class GroupActivity(object):
     def import_xml_string(cls, xml, grading_override = False):
         doc_tree = ET.fromstring(xml)
         return cls(doc_tree, grading_override)
-

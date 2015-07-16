@@ -308,7 +308,7 @@ class GroupProjectBlock(XBlock):
         review_item_data = self.project_api.get_workgroup_review_items_for_group(group_id, self.content_id)
         review_item_map = {make_key(r['question'], self.real_user_id(r['reviewer'])) : r['answer'] for r in review_item_data}
         all_reviewer_ids = set([self.real_user_id(r['reviewer']) for r in review_item_data])
-        group_reviewer_ids = [u["id"] for u in self.project_api.get_workgroup_reviewers(group_id)]
+        group_reviewer_ids = [u["id"] for u in self.project_api.get_workgroup_reviewers(group_id, self.content_id)]
         admin_reviewer_ids = [ar_id for ar_id in all_reviewer_ids if ar_id not in group_reviewer_ids]
 
         group_activity = GroupActivity.import_xml_string(self.data, self.is_admin_grader)
