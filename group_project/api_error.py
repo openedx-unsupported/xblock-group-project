@@ -40,6 +40,7 @@ class ApiError(Exception):
     def __str__(self):
         return "ApiError '{}' ({})".format(self.message, self.code)
 
+
 def api_error_protect(func):
     '''
     Decorator which will raise an ApiError for api calls

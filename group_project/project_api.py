@@ -16,6 +16,7 @@ SUBMISSION_API = '/'.join([API_PREFIX, 'submissions'])
 GROUP_API = '/'.join([API_PREFIX, 'groups'])
 COURSES_API = '/'.join([API_PREFIX, 'courses'])
 
+
 def _build_date_field(json_date_string_value):
     ''' converts json date string to date object '''
     try:
@@ -25,6 +26,7 @@ def _build_date_field(json_date_string_value):
         )
     except ValueError:
         return None
+
 
 class ProjectAPI(object):
 
@@ -271,7 +273,6 @@ class ProjectAPI(object):
 
         return json.loads(response.read())
 
-
     @api_error_protect
     def set_group_grade(self, group_id, course_id, activity_id, grade_value, max_grade):
         grade_data = {
@@ -315,7 +316,6 @@ class ProjectAPI(object):
         )
 
         return json.loads(response.read())
-
 
     def get_latest_workgroup_submissions_by_id(self, group_id):
         submission_list = self.get_workgroup_submissions(group_id)
