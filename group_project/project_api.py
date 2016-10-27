@@ -398,7 +398,7 @@ class ProjectAPI(object):
         )
 
         review_assignment_user_urls = [
-            '{}{}users/'.format(self._api_server_address, ra["url"])
+            '{}users/'.format(ra["url"])
             for ra in json.loads(response.read())
             if ra["data"]["xblock_id"] == content_id
         ]
