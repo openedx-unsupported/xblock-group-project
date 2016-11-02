@@ -8,13 +8,11 @@ from django.conf import settings
 
 TRACE = True
 
-
 class UploadFile(object):
 
     _sha1_hash = None
 
-    # group_id, user_id, project_api)
-    def __init__(self, file, submission_id, project_context):
+    def __init__(self, file, submission_id, project_context):#group_id, user_id, project_api)
 
         self.file = file
         self.mimetype = mimetypes.guess_type(self.file.name)[0]
@@ -49,19 +47,12 @@ class UploadFile(object):
         try:
             location = default_storage.url(path)
         except NotImplementedError:
-            location = "file:///{}/{}".format(
-                settings.BASE_DIR,
-                default_storage.path(path)
-            )
+            location = "file:///{}/{}".format(settings.BASE_DIR, default_storage.path(path))
 
         return location
 
     def _file_storage_path(self):
-        return "group_work/{}/{}/{}".format(
-            self.group_id,
-            self.sha1,
-            self.file.name
-        )
+        return "group_work/{}/{}/{}".format(self.group_id, self.sha1, self.file.name)
 
     def save_file(self):
         path = self._file_storage_path()

@@ -51,7 +51,6 @@ log = logging.getLogger(__name__)
 def make_key(*args):
     return ":".join([str(a) for a in args])
 
-
 class OutsiderDisallowedError(Exception):
     def __init__(self, detail):
         self.value = detail
@@ -62,7 +61,6 @@ class OutsiderDisallowedError(Exception):
 
     def __unicode__(self):
         return u"Outsider Denied Access: {}".format(self.value)
-
 
 @XBlock.wants('notifications')
 @XBlock.wants('courseware_parent_info')
@@ -246,10 +244,6 @@ class GroupProjectBlock(XBlock):
             "ta_graded": (self.group_reviews_required_count < 1),
         }
 
-        user_prefs = self.project_api.get_user_preferences(self.user_id)
-        for activity_component in group_activity.activity_components:
-            activity_component.grading_override = True if "TA_REVIEW_WORKGROUP" in user_prefs else False
-
         fragment = Fragment()
         fragment.add_content(
             render_template('/templates/html/group_project.html', context))
@@ -382,6 +376,7 @@ class GroupProjectBlock(XBlock):
             # That's ok in this case
             if e.code != 409:
                 raise
+
 
     def update_upload_complete(self):
         for u in self.workgroup["users"]:
@@ -732,7 +727,7 @@ class GroupProjectBlock(XBlock):
         )
         html_output = render_template('/templates/html/review_submissions.html', {"group_activity": group_activity})
 
-        return webob.response.Response(body=json.dumps({"html": html_output}))
+        return webob.response.Response(body=json.dumps({"html":html_output}))
 
     @XBlock.handler
     def refresh_submission_links(self, request, suffix=''):
@@ -743,7 +738,7 @@ class GroupProjectBlock(XBlock):
         )
         html_output = render_template('/templates/html/submission_links.html', {"group_activity": group_activity})
 
-        return webob.response.Response(body=json.dumps({"html": html_output}))
+        return webob.response.Response(body=json.dumps({"html":html_output}))
 
     def get_courseware_info(self, courseware_parent_info_service):
         activity_name = self.display_name
@@ -772,6 +767,8 @@ class GroupProjectBlock(XBlock):
                 )
                 project_name = project_courseware_info['display_name']
                 project_location = project_courseware_info['location']
+
+
         except Exception, ex:
             # Can't look this up then log and just use the default
             # which is our display_name
