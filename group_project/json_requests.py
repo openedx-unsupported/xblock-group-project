@@ -20,7 +20,6 @@ TIMEOUT = 20
 
 TRACE = True
 
-
 def trace_request_information(func):
     '''
     Decorator which will trace information

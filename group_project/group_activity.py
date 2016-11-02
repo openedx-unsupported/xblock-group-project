@@ -2,11 +2,11 @@ import xml.etree.ElementTree as ET
 from datetime import date
 import copy
 import json
+from django.template.loader import render_to_string
 from pkg_resources import resource_filename
 
 from utils import render_template
 from .project_api import _build_date_field
-
 
 def outer_html(node):
     if node is None:
@@ -14,14 +14,12 @@ def outer_html(node):
 
     return ET.tostring(node, 'utf-8', 'html').strip()
 
-
 def inner_html(node):
     if node is None:
         return None
 
     tag_length = len(node.tag)
     return outer_html(node)[tag_length+2:-1*(tag_length+3)]
-
 
 class DottableDict(dict):
     def __init__(self, *args, **kwargs):
@@ -150,7 +148,6 @@ class ActivityAssessment(object):
 
         return html
 
-
 class ActivitySection(object):
 
     def __init__(self, doc_tree, component, activity):
@@ -221,6 +218,7 @@ class ActivitySection(object):
         if self.upload_dialog:
             return inner_html(self.content)
         return None
+
 
     @property
     def export_xml(self):
@@ -345,7 +343,7 @@ class GroupActivity(object):
         split_string = date_string.split('/')
         return date(int(split_string[2]), int(split_string[0]), int(split_string[1]))
 
-    def __init__(self, doc_tree, grading_override=False):
+    def __init__(self, doc_tree, grading_override = False):
 
         self.resources = []
         self.submissions = []
@@ -449,6 +447,7 @@ class GroupActivity(object):
             elif ac.open_date and ac.open_date <= date.today():
                 default_stage = ac.id
 
+
         next_step = None
         for ac in reversed(self.activity_components):
             step_map[ac.id]["next"] = next_step
@@ -475,6 +474,6 @@ class GroupActivity(object):
         return cls(doc_tree)
 
     @classmethod
-    def import_xml_string(cls, xml, grading_override=False):
+    def import_xml_string(cls, xml, grading_override = False):
         doc_tree = ET.fromstring(xml)
         return cls(doc_tree, grading_override)
