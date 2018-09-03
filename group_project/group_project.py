@@ -18,6 +18,7 @@ from django.conf import settings
 from django.utils import html
 from django.utils.translation import ugettext as _
 
+from xblock.completable import XBlockCompletionMode
 from xblock.core import XBlock
 from xblock.fields import Scope, String, Dict, Float, Integer
 from xblock.fragment import Fragment
@@ -65,10 +66,11 @@ class OutsiderDisallowedError(Exception):
 @XBlock.wants('notifications')
 @XBlock.wants('courseware_parent_info')
 class GroupProjectBlock(XBlock):
+    """
+    XBlock providing a group activity project for a group of students to collaborate upon.
+    """
 
-    """
-    XBlock providing a group activity project for a group of students to collaborate upon
-    """
+    completion_mode = XBlockCompletionMode.EXCLUDED
     display_name = String(
         display_name="Display Name",
         help="This name appears in the horizontal navigation at the top of the page.",
