@@ -23,11 +23,11 @@ def package_data(pkg, root_list):
 
 setup(
     name='xblock-group-project',
-    version='0.1',
+    version='0.1.1',
     description='XBlock - Group Project',
     packages=['group_project'],
     install_requires=[
-        'XBlock',
+        'XBlock>=1.1',
     ],
     entry_points={
         'xblock.v1': 'group-project = group_project:GroupProjectBlock',
