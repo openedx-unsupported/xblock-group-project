@@ -194,7 +194,8 @@ class ActivitySection(object):
 
     @property
     def has_submissions(self):
-        return len([file_link for file_link in self.file_links if hasattr(file_link, 'location') and file_link.location]) > 0
+        if self.file_links:
+            return len([file_link for file_link in self.file_links if hasattr(file_link, 'location') and file_link.location]) > 0
 
     @property
     def upload_links(self):
