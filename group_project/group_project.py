@@ -3,34 +3,30 @@
 
 # Imports ###########################################################
 
+import json
 import logging
 import textwrap
-import json
-import webob
 from datetime import datetime, timedelta
-import pytz
-
-from lxml import etree
+from io import StringIO
 from xml.etree import ElementTree as ET
-from pkg_resources import resource_filename
 
+import pytz
+import webob
 from django.conf import settings
 from django.utils import html
 from django.utils.translation import ugettext as _
-
+from lxml import etree
+from pkg_resources import resource_filename
 from xblock.completable import XBlockCompletionMode
 from xblock.core import XBlock
-from xblock.fields import Scope, String, Dict, Float, Integer
+from xblock.fields import Dict, Float, Integer, Scope, String
 from xblock.fragment import Fragment
 
-from StringIO import StringIO
-
-from .utils import render_template, AttrDict, load_resource
-
+from .api_error import ApiError
 from .group_activity import GroupActivity
 from .project_api import ProjectAPI
 from .upload_file import UploadFile
-from .api_error import ApiError
+from .utils import AttrDict, load_resource, render_template
 
 ALLOWED_OUTSIDER_ROLES = getattr(settings, "ALLOWED_OUTSIDER_ROLES", None)
 if ALLOWED_OUTSIDER_ROLES is None:
@@ -61,7 +57,7 @@ class OutsiderDisallowedError(Exception):
         return "Outsider Denied Access: {}".format(self.value)
 
     def __unicode__(self):
-        return u"Outsider Denied Access: {}".format(self.value)
+        return "Outsider Denied Access: {}".format(self.value)
 
 @XBlock.wants('notifications')
 @XBlock.wants('courseware_parent_info')
@@ -140,7 +136,7 @@ class GroupProjectBlock(XBlock):
     @property
     def project_api(self):
         if self._project_api is None:
-            api_server = "http://127.0.0.1:8000"
+            api_server = "http://127.0.0.1:18000"
             if hasattr(settings, 'API_LOOPBACK_ADDRESS'):
                 api_server = settings.API_LOOPBACK_ADDRESS
             self._project_api = ProjectAPI(api_server)
@@ -190,14 +186,14 @@ class GroupProjectBlock(XBlock):
     @property
     def content_id(self):
         try:
-            return unicode(self.scope_ids.usage_id)
+            return str(self.scope_ids.usage_id)
         except:
             return self.id
 
     @property
     def course_id(self):
         try:
-            return unicode(self.xmodule_runtime.course_id)
+            return str(self.xmodule_runtime.course_id)
         except:
             return self.xmodule_runtime.course_id
 
@@ -210,7 +206,7 @@ class GroupProjectBlock(XBlock):
             workgroup = self.workgroup
         except OutsiderDisallowedError as ode:
             error_fragment = Fragment()
-            error_fragment.add_content(render_template('/templates/html/loading_error.html', {'error_message': unicode(ode)}))
+            error_fragment.add_content(render_template('/templates/html/loading_error.html', {'error_message': str(ode)}))
             error_fragment.add_javascript(load_resource('public/js/group_project_error.js'))
             error_fragment.initialize_js('GroupProjectError')
             return error_fragment
@@ -771,7 +767,7 @@ class GroupProjectBlock(XBlock):
                 project_location = project_courseware_info['location']
 
 
-        except Exception, ex:
+        except Exception as ex:
             # Can't look this up then log and just use the default
             # which is our display_name
             log.exception(ex)
@@ -810,7 +806,7 @@ class GroupProjectBlock(XBlock):
 
             msg = NotificationMessage(
                 msg_type=msg_type,
-                namespace=unicode(self.course_id),
+                namespace=str(self.course_id),
                 payload={
                     '_schema_version': 1,
                     'action_username': uploader_username,
@@ -829,8 +825,8 @@ class GroupProjectBlock(XBlock):
             # so we need to resolve these links at dispatch time
             #
             msg.add_click_link_params({
-                'course_id': unicode(self.course_id),
-                'activity_location': unicode(activity_location) if activity_location else '',
+                'course_id': str(self.course_id),
+                'activity_location': str(activity_location) if activity_location else '',
             })
 
             # NOTE: We're not using Celery here since we are expectating that we
@@ -839,7 +835,7 @@ class GroupProjectBlock(XBlock):
                 workgroup_user_ids,
                 msg
             )
-        except Exception, ex:
+        except Exception as ex:
             # While we *should* send notification, if there is some
             # error here, we don't want to blow the whole thing up.
             # So log it and continue....
@@ -859,7 +855,7 @@ class GroupProjectBlock(XBlock):
 
             msg = NotificationMessage(
                 msg_type=msg_type,
-                namespace=unicode(self.course_id),
+                namespace=str(self.course_id),
                 payload={
                     '_schema_version': 1,
                     'activity_name': activity_name,
@@ -877,8 +873,8 @@ class GroupProjectBlock(XBlock):
             # so we need to resolve these links at dispatch time
             #
             msg.add_click_link_params({
-                'course_id': unicode(self.course_id),
-                'activity_location': unicode(activity_location) if activity_location else '',
+                'course_id': str(self.course_id),
+                'activity_location': str(activity_location) if activity_location else '',
             })
 
             # Bulk publish to the 'group_project_workgroup' user scope
@@ -890,7 +886,7 @@ class GroupProjectBlock(XBlock):
                 },
                 msg
             )
-        except Exception, ex:
+        except Exception as ex:
             # While we *should* send notification, if there is some
             # error here, we don't want to blow the whole thing up.
             # So log it and continue....
@@ -921,7 +917,7 @@ class GroupProjectBlock(XBlock):
 
         msg = NotificationMessage(
             msg_type=notifications_service.get_notification_type(msg_type),
-            namespace=unicode(course_id),
+            namespace=str(course_id),
             payload={
                 '_schema_version': 1,
                 'activity_name': activity_name,
@@ -941,8 +937,8 @@ class GroupProjectBlock(XBlock):
         # so we need to resolve these links at dispatch time
         #
         msg.add_click_link_params({
-            'course_id': unicode(course_id),
-            'activity_location': unicode(activity_location),
+            'course_id': str(course_id),
+            'activity_location': str(activity_location),
         })
 
         notifications_service.publish_timed_notification(
@@ -951,8 +947,8 @@ class GroupProjectBlock(XBlock):
             # send to all students participating in this project
             scope_name='group_project_participants',
             scope_context={
-                'course_id': unicode(course_id),
-                'content_id': unicode(project_location),
+                'course_id': str(course_id),
+                'content_id': str(project_location),
             },
             timer_name=self._get_component_timer_name(component, timer_name_suffix),
             ignore_if_past_due=True  # don't send if we're already late!
@@ -980,7 +976,7 @@ class GroupProjectBlock(XBlock):
                         self._set_activity_timed_notification(
                             course_id,
                             group_activity,
-                            u'open-edx.xblock.group-project.stage-open',
+                            'open-edx.xblock.group-project.stage-open',
                             component,
                             datetime.combine(component.open_date, datetime.min.time()),
                             datetime.combine(component.open_date, datetime.min.time()),
@@ -993,7 +989,7 @@ class GroupProjectBlock(XBlock):
                         self._set_activity_timed_notification(
                             course_id,
                             group_activity,
-                            u'open-edx.xblock.group-project.stage-due',
+                            'open-edx.xblock.group-project.stage-due',
                             component,
                             datetime.combine(component.close_date, datetime.min.time()),
                             datetime.combine(component.close_date, datetime.min.time()),
@@ -1005,7 +1001,7 @@ class GroupProjectBlock(XBlock):
                         self._set_activity_timed_notification(
                             course_id,
                             group_activity,
-                            u'open-edx.xblock.group-project.stage-due',
+                            'open-edx.xblock.group-project.stage-due',
                             component,
                             datetime.combine(component.close_date, datetime.min.time()),
                             datetime.combine(component.close_date, datetime.min.time()) - timedelta(days=3),
@@ -1013,7 +1009,7 @@ class GroupProjectBlock(XBlock):
                             'coming-due'
                         )
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)
 
     def on_before_studio_delete(self, course_id, services):
@@ -1044,5 +1040,5 @@ class GroupProjectBlock(XBlock):
                         self._get_component_timer_name(component, 'coming-due')
                     )
 
-        except Exception, ex:
+        except Exception as ex:
             log.exception(ex)

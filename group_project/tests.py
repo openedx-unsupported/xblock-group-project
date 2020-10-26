@@ -3,7 +3,8 @@
 
 import sys
 from datetime import date
-from group_activity import GroupActivity
+
+from .group_activity import GroupActivity
 
 STOP_ON_ERROR = True
 
@@ -98,4 +99,4 @@ if __name__ == "__main__":
     except Exception as e:
         sys.stdout.write("\n{}".format(e.message))
     finally:
-        print
+        print()

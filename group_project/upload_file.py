@@ -1,10 +1,9 @@
-import mimetypes
 import hashlib
-
-from django.core.files import File
-from django.core.files.storage import default_storage
+import mimetypes
 
 from django.conf import settings
+from django.core.files import File
+from django.core.files.storage import default_storage
 
 TRACE = True
 
@@ -58,12 +57,12 @@ class UploadFile(object):
         path = self._file_storage_path()
         if not default_storage.exists(path):
             if TRACE:
-                print "Storing to {}".format(path)
+                print("Storing to {}".format(path))
             default_storage.save(path, File(self.file))
             if TRACE:
-                print "Successfully stored file to {}".format(path)
+                print("Successfully stored file to {}".format(path))
         elif TRACE:
-            print "File already stored at {}".format(path)
+            print("File already stored at {}".format(path))
 
     def submit(self):
         submit_hash = {

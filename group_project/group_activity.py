@@ -1,18 +1,20 @@
-import xml.etree.ElementTree as ET
-from datetime import date
 import copy
 import json
+import xml.etree.ElementTree as ET
+from datetime import date
+
 from django.template.loader import render_to_string
 from pkg_resources import resource_filename
 
-from utils import render_template
 from .project_api import _build_date_field
+from .utils import render_template
+
 
 def outer_html(node):
     if node is None:
         return None
 
-    return ET.tostring(node, 'utf-8', 'html').strip()
+    return ET.tostring(node, 'unicode', 'html').strip()
 
 def inner_html(node):
     if node is None:
@@ -407,7 +409,7 @@ class GroupActivity(object):
             document["grading_criteria"] = True if document in self.grading_criteria else None
             dottable_documents.append(DottableDict(document))
 
-        milestones = [DottableDict({"name": key, "mmddyy": value.strftime("%m/%d/%Y")}) for key, value in self.milestone_dates.iteritems()]
+        milestones = [DottableDict({"name": key, "mmddyy": value.strftime("%m/%d/%Y")}) for key, value in self.milestone_dates.items()]
 
         data = {
             "documents": dottable_documents,
