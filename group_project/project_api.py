@@ -1,10 +1,10 @@
 ''' API calls with respect group projects'''
-import json
 import datetime
-from urllib import urlencode
+import json
+from urllib.parse import urlencode
 
-from .json_requests import GET, POST, PUT, DELETE
 from .api_error import api_error_protect
+from .json_requests import DELETE, GET, POST, PUT
 
 API_PREFIX = '/'.join(['api', 'server'])
 
@@ -43,7 +43,7 @@ class ProjectAPI(object):
             ),
         )
 
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
     @api_error_protect
     def get_peer_review_items_for_group(self, group_id, content_id):
@@ -58,7 +58,7 @@ class ProjectAPI(object):
                 urlencode(qs_params),
             )
         )
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
 
     @api_error_protect
@@ -71,7 +71,7 @@ class ProjectAPI(object):
             ),
             question_data
         )
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
 
     @api_error_protect
@@ -83,7 +83,7 @@ class ProjectAPI(object):
             ),
             question_data
         )
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
     @api_error_protect
     def delete_peer_review_assessment(self, assessment_id):
@@ -108,7 +108,7 @@ class ProjectAPI(object):
                 urlencode(qs_params),
             )
         )
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
 
     @api_error_protect
@@ -121,7 +121,7 @@ class ProjectAPI(object):
             ),
             question_data
         )
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
 
     @api_error_protect
@@ -133,7 +133,7 @@ class ProjectAPI(object):
             ),
             question_data
         )
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
     @api_error_protect
     def delete_workgroup_review_assessment(self, assessment_id):
@@ -156,7 +156,7 @@ class ProjectAPI(object):
     def submit_peer_review_items(self, reviewer_id, peer_id, group_id, content_id, data):
         # get any data already there
         current_data = {pi['question']: pi for pi in self.get_peer_review_items(reviewer_id, peer_id, group_id, content_id)}
-        for k,v in data.iteritems():
+        for k,v in data.items():
             if k in current_data:
                 question_data = current_data[k]
 
@@ -189,7 +189,7 @@ class ProjectAPI(object):
     def submit_workgroup_review_items(self, reviewer_id, group_id, content_id, data):
         # get any data already there
         current_data = {ri['question']: ri for ri in self.get_workgroup_review_items(reviewer_id, group_id, content_id)}
-        for k,v in data.iteritems():
+        for k,v in data.items():
             if k in current_data:
                 question_data = current_data[k]
 
@@ -224,7 +224,7 @@ class ProjectAPI(object):
                 group_id
             )
         )
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
     @api_error_protect
     def get_user_workgroup_for_course(self, user_id, course_id):
@@ -240,7 +240,7 @@ class ProjectAPI(object):
             )
         )
 
-        workgroups_list = json.loads(response.read())
+        workgroups_list = json.loads(response.read().decode('utf-8'))
 
         if workgroups_list['count'] < 1:
             return None
@@ -256,7 +256,7 @@ class ProjectAPI(object):
                 user_id,
             )
         )
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
     @api_error_protect
     def get_user_grades(self, user_id, course_id):
@@ -269,7 +269,7 @@ class ProjectAPI(object):
             )
         )
 
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
 
     @api_error_protect
@@ -290,7 +290,7 @@ class ProjectAPI(object):
             grade_data
         )
 
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
     @api_error_protect
     def create_submission(self, submit_hash):
@@ -302,7 +302,7 @@ class ProjectAPI(object):
             submit_hash
         )
 
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
     @api_error_protect
     def get_workgroup_submissions(self, group_id):
@@ -314,7 +314,7 @@ class ProjectAPI(object):
             )
         )
 
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
 
     def get_latest_workgroup_submissions_by_id(self, group_id):
@@ -349,7 +349,7 @@ class ProjectAPI(object):
             )
         )
 
-        return json.loads(response.read())["groups"]
+        return json.loads(response.read().decode('utf-8'))["groups"]
 
     @api_error_protect
     def get_workgroups_for_assignment(self, assignment_id):
@@ -361,7 +361,7 @@ class ProjectAPI(object):
             )
         )
 
-        workgroups = json.loads(response.read())
+        workgroups = json.loads(response.read().decode('utf-8'))
         return workgroups["results"]
 
     @api_error_protect
@@ -374,7 +374,7 @@ class ProjectAPI(object):
             )
         )
 
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
     @api_error_protect
     def get_workgroups_to_review(self, user_id, course_id, xblock_id):
@@ -399,7 +399,7 @@ class ProjectAPI(object):
 
         review_assignment_user_urls = [
             '{}users/'.format(ra["url"])
-            for ra in json.loads(response.read())
+            for ra in json.loads(response.read().decode('utf-8'))
             if ra["data"]["xblock_id"] == content_id
         ]
         reviewers = []
@@ -427,7 +427,7 @@ class ProjectAPI(object):
             completion_data
         )
 
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))
 
     @api_error_protect
     def get_user_roles_for_course(self, user_id, course_id):
@@ -443,4 +443,4 @@ class ProjectAPI(object):
             )
         )
 
-        return json.loads(response.read())
+        return json.loads(response.read().decode('utf-8'))

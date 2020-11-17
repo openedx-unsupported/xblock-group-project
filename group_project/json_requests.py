@@ -1,6 +1,7 @@
 ''' GET, POST, DELETE, PUT requests for json client '''
-import urllib2 as url_access
 import json
+import urllib.request as url_access
+
 from django.conf import settings
 
 # nice to have capitalised names for familiar GET, POST, DELETE, PUT
@@ -26,14 +27,14 @@ def trace_request_information(func):
     '''
     def make_request(*args, **kwargs):
         # log information about the request
-        print "!!! {} request to {}".format(func.__name__, args[0])
+        print("!!! {} request to {}".format(func.__name__, args[0]))
 
         if len(args) > 1:
-            print "!!! using data {}".format(args[1])
+            print("!!! using data {}".format(args[1]))
 
         response = func(*args, **kwargs)
 
-        print "!!! Reponse code: {}".format(response.code)
+        print("!!! Reponse code: {}".format(response.code))
 
         return response
     return make_request
