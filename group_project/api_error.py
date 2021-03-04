@@ -1,8 +1,7 @@
 import json
-from urllib2 import HTTPError
+from urllib.error import HTTPError
 
 from django.utils.translation import ugettext_lazy as _
-
 
 ERROR_CODE_MESSAGES = {}
 
@@ -49,6 +48,6 @@ def api_error_protect(func):
             return func(*args, **kwargs)
         except HTTPError as he:
             api_error = ApiError(he, ERROR_CODE_MESSAGES.get(func, None))
-            print "Error calling {}: {}".format(func, api_error)
+            print("Error calling {}: {}".format(func, api_error))
             raise api_error
     return call_api_method

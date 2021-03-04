@@ -3,8 +3,8 @@
 # Imports ###########################################################
 
 import os
-from setuptools import setup
 
+from setuptools import setup
 
 # Functions #########################################################
 
@@ -23,7 +23,7 @@ def package_data(pkg, root_list):
 
 setup(
     name='xblock-group-project',
-    version='0.1.3',
+    version='1.0.0',
     description='XBlock - Group Project',
     packages=['group_project'],
     install_requires=[
